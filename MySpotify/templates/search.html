@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Spotify</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #191414; /* Background nero */
+      color: #1DB954; /* Testo verde Spotify */
+    }
+    header {
+      background-color: #000;
+      color: #1DB954; /* Testo bianco */
+      padding: 1px;
+      text-align: center;
+    }
+    nav {
+      background-color: #212121; /* Grigio scuro */
+      padding: 7px;
+      text-align: center;
+    }
+    nav ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+    nav ul li {
+      display: inline;
+      margin: 0 10px;
+    }
+    nav ul li a {
+      color: #fff;
+      text-decoration: none;
+      transition: color 0.3s ease; /* Transizione del colore */
+    }
+    nav ul li a:hover {
+      color: #1DB954; /* Cambio di colore al passaggio del mouse */
+      cursor: pointer;
+    }
+    .container {
+      max-width: 1300px;
+      margin: auto;
+      padding: 5px;
+    }
+    .left-section {
+      width: 50%;
+      float: left;
+    }
+    .right-section {
+      width: 50%;
+      float: right;
+    }
+    .search-bar {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .search-bar input[type="text"] {
+      background-color: #555555;
+      color: white;
+      padding: 10px;
+      border-radius: 20px;
+      border: none;
+      width: 400px;
+      height: 20px;
+      font-size: large;
+    }
+    .search-bar button {
+      background-color: #1DB954;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin-left: 5px;
+      border-radius:  20px;
+    }
+    .search-bar button:hover {
+      background-color: #45a049;
+    }
+    .playlist {
+      display: flex;
+      flex-wrap: wrap; /* Permette il wrapping degli elementi */
+      justify-content: space-between; /* Centra gli elementi orizzontalmente */
+      gap: 20px; /* Aggiunge uno spazio tra gli elementi */
+      transition: max-height 0.5s ease-in-out; /* Aggiungi una transizione per l'altezza massima */
+      max-height: 0; /* Inizialmente nascondi le playlist impostando l'altezza massima a 0 */
+      overflow: hidden; /* Nascondi eventuali contenuti che superano l'altezza massima */
+    }
+
+    #playlists-title {
+      cursor: pointer;
+    }
+    #playlists-title:hover {
+      color: #2aff34;
+    }
+    .playlist-item {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+      background-color: rgb(68, 68, 68);
+      color: white;
+      width: 150px;
+      height: 230px;
+      transition: transform 0.3s ease; /* Aggiungi una transizione per un effetto fluido */
+      border-radius: 10px;
+    }
+    .playlist-item:hover {
+      transform: scale(1.1); /* Rendi la playlist leggermente più grande al passaggio del mouse */
+    }
+    .playlist-item a {
+      text-decoration: none; /* Rimuove la sottolineatura del testo quando è un link */
+      color: white; /* Colore del testo per i link */
+    }
+    .playlist-item img {
+      max-width: 100%;
+      max-height: 200px; /* Limita l'altezza dell'immagine */
+      border-radius: 10px; /* Aggiunge bordi arrotondati all'immagine */
+    }
+    #songs-title {
+      cursor: pointer;
+    }
+    #songs-title:hover {
+      color: #2aff34;
+    }
+    .song-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      transition: max-height 0.5s ease-in-out; /* Aggiungi una transizione per l'altezza massima */
+      max-height: 0; /* Inizialmente nascondi le canzoni impostando l'altezza massima a 0 */
+      overflow: hidden; /* Nascondi eventuali contenuti che superano l'altezza massima */
+    }
+    .song-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px; /* Ridotto lo spazio tra le canzoni */
+      border-bottom: 1px solid #212121; /* Bordo per separare le canzoni */
+      padding-bottom: 10px; /* Aggiunto spazio sotto ogni canzone */
+      background-color: rgb(68, 68, 68); 
+      border-radius: 10px;
+      transition: transform 0.3s ease; /* Aggiungi una transizione per un effetto fluido */
+    }
+    .song-item:hover {
+      background-color: white;
+      cursor: pointer;
+    }
+    .song-item:hover h4, .song-item:hover p {
+      color: black;
+    }
+    .song-item img {
+      width: 55px;
+      height: 55px;
+      margin-right: 10px;
+      margin-top: 9px;
+      margin-left: 7px;
+      object-fit: cover; /* Per riempire il contenitore con l'immagine */
+      border-radius: 6px; /* Bordo arrotondato per l'immagine */
+    }
+    .song-item .song-details {
+      flex-grow: 1; /* Flessibilità per occupare lo spazio disponibile */
+    }
+    .song-item h4{
+      margin: 0; /* Rimozione del margine */
+      color: white; /* Testo bianco */
+    }
+    .song-item p {
+      margin: 0; /* Rimozione del margine */
+      color: rgb(159, 152, 152); /* Testo bianco */
+    }
+    .playlist-heading {
+      color: #1DB954; /* Testo bianco */
+    }
+    .download-button {
+      color: #1DB954;
+      font-size: 20px;
+      margin-right: 14px;
+    }
+    .artists {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      grid-gap: 20px;
+      transition: max-height 0.5s ease-in-out; /* Aggiungi una transizione per l'altezza massima */
+      max-height: 0; /* Inizialmente nascondi gli artisti impostando l'altezza massima a 0 */
+      overflow: hidden; /* Nascondi eventuali contenuti che superano l'altezza massima */
+    }
+    #artists-title {
+      cursor: pointer;
+    }
+    #artists-title:hover {
+      color: #2aff34;
+    }
+    .artist-item {
+      padding: 10px;
+      text-align: center;
+      color: white;
+      width: 150px;
+      height: 200px;
+      transition: transform 0.3s ease; /* Aggiungi una transizione per un effetto fluido */
+      border-radius: 10px;
+    }
+    .artist-item:hover {
+      transform: scale(1.1); /* Rendi la playlist leggermente più grande al passaggio del mouse */
+    }
+    .artist-item a {
+      text-decoration: none; /* Rimuove la sottolineatura del testo quando è un link */
+      color: white; /* Colore del testo per i link */
+    }
+    .artist-item img {
+      width: 150px; /* Imposta larghezza e altezza uguali */
+      height: 150px;
+      object-fit: cover; /* Per riempire il contenitore con l'immagine */
+      border-radius: 50%; /* Aggiunge bordi arrotondati all'immagine */
+    }
+
+    .albums {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      grid-gap: 20px;
+      transition: max-height 0.5s ease-in-out; /* Aggiungi una transizione per l'altezza massima */
+      max-height: 0; /* Inizialmente nascondi le playlist impostando l'altezza massima a 0 */
+      overflow: hidden; /* Nascondi eventuali contenuti che superano l'altezza massima */
+    }
+    #albums-title {
+      cursor: pointer;
+    }
+    #albums-title:hover {
+      color: #2aff34;
+    }
+
+    .album-item {
+      padding: 10px;
+      text-align: center;
+      color: white;
+      height: 200px; /* Altezza fissa per tutti gli album */
+      border-radius: 10px;
+      overflow: hidden; /* Per nascondere eventuali parti in eccesso dell'immagine */
+      transition: transform 0.3s ease
+    }
+    .album-item:hover {
+      transform: scale(1.1); /* Rendi la playlist leggermente più grande al passaggio del mouse */
+    }
+
+    .album-item img {
+      width: 75%; /* Riempi completamente il contenitore */
+      height: auto; /* Dimensione proporzionale */
+      object-fit: cover; /* Riempimento proporzionale, taglia o allarga l'immagine per adattarla */
+    }
+
+    .album-link {
+      text-decoration: none;
+      color: white;
+    }
+
+    /* Imposta l'immagine dell'album come sfondo */
+    .album-item {
+      background-size: cover; /* Adatta l'immagine allo spazio disponibile */
+      background-position: center; /* Centra l'immagine nel contenitore */
+    }
+
+    /* Modifica lo stile dell'elemento "h4" nell'album-item */
+    .album-item h4 {
+      margin: 0;
+      padding: 10px; /* Aggiunto padding per migliorare la leggibilità */
+      color: white;
+      border-radius: 0 0 10px 10px; /* Bordo arrotondato solo in basso */
+    }
+
+  </style>
+</head>
+<body>
+
+  <header>
+    <h2>My Spotify</h2>
+  </header>
+
+  <nav>
+    <ul>
+      <li><a href="http://localhost:8000/home">Home</a></li>
+      <li><a href="http://localhost:8000/search">Browse</a></li>
+      <li><a href="http://localhost:8000/playlists">Your Library</a></li>
+      <li><a href="http://localhost:8000/favorites">Favorites</a></li>
+      <li><a onclick="Saved()">Saved</a></li>
+    </ul>
+  </nav>
+  <div class="container">
+    <div class="search-bar">
+      <input type="text" name="search_query" placeholder="Search...">
+      <button type="submit"><i class="fas fa-search"></i></button>
+    </div>
+
+    {% if songs %}
+    <h2 id="songs-title">Songs</h2>
+    <ul class="song-list">
+      {% for song in songs %}
+        <li class="song-item" onclick='Player("{{ song.name }}","{{ song.artist }}")'>
+            <img src="{{ song.image }}" alt="{{ song.name }}">
+            <div class="song-details">
+                <h4 style="padding-top: 6px;">{{ song.name }}</h4>
+                <p>{{ song.artist }}</p>
+            </div>
+            <a href="http://localhost:8000/download/{{ song.name }}/{{ song.artist }}" class="download-button" onclick="preventPlayer(event)"><i class="fas fa-download"></i></a>
+        </li>    
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% if playlists %}
+    <h2 id="playlists-title">Playlists</h2>
+    <div class="playlist">
+        {% for playlist in playlists %}
+        <a href="http://localhost:8000/playlist/{{ playlist.id }}/{{playlist.name}}" class="playlist-link" style="text-decoration: none;">
+        <div class="playlist-item">
+          <img src="{{ playlist.image }}" alt="{{ playlist.name }}">
+          <h4>{{ playlist.name }}</h4>
+        </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if albums %}
+    <h2 id="albums-title">Albums</h2>
+    <div class="albums">
+        {% for album in albums %}
+        <a href="http://localhost:8000/albums/{{ album.id }}" class="album-link" style="text-decoration: none;">
+        <div class="album-item">
+          <img src="{{ album.image }}" alt="{{ album.name }}">
+          <h4>{{album.artist}} - {{ album.name }}</h4>
+        </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    {% if artists %}
+    <h2 id="artists-title">Artists</h2>
+    <div class="artists">
+        {% for artist in artists %}
+        <a href="http://localhost:8000/artist/{{ artist.id }}" class="artist-link" style="text-decoration: none;">
+        <div class="artist-item">
+          <img src="{{ artist.image }}" alt="{{ artist.name }}">
+          <h4>{{ artist.name }}</h4>
+        </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+  <div style="height: 200px;"></div>
+  <script>
+    //quando si clicca il bottone si va alla pagina search/ + il contenuto di input
+    document.querySelector('button').addEventListener('click', function() {
+      //se esiste un input fallo, altrimenti ritorna a search
+      if (!document.querySelector('input').value) {
+        window.location.href = 'http://localhost:8000/search';
+      }else{
+        const searchQuery = document.querySelector('input').value;
+        window.location.href = `http://localhost:8000/search/${searchQuery}`;
+      }
+    });
+
+    document.getElementById('playlists-title').addEventListener('click', function() {
+      // Trova l'elemento con la classe "playlist"
+      var playlists = document.querySelector('.playlist');
+      if (playlists.style.maxHeight) {
+        // Se l'altezza massima è già impostata, rimuovila per nascondere le playlist
+        playlists.style.padding = "0";
+        playlists.style.maxHeight = null;
+      } else {
+        // Altrimenti, imposta il padding e l'altezza massima per far apparire le playlist con l'animazione
+        playlists.style.padding = "20px";
+        playlists.style.maxHeight = playlists.scrollHeight + "px";
+      }
+    });
+
+
+    document.getElementById('albums-title').addEventListener('click', function() {
+      // Trova l'elemento con la classe "albums"
+      var albums = document.querySelector('.albums');
+      if (albums.style.maxHeight) {
+        // Se l'altezza massima è già impostata, rimuovila per nascondere gli album
+        albums.style.maxHeight = null;
+      } else {
+        // Altrimenti, imposta l'altezza massima per far apparire gli album con l'animazione
+        albums.style.maxHeight = albums.scrollHeight + "px";
+      }
+    });
+
+    document.getElementById('artists-title').addEventListener('click', function() {
+      // Trova l'elemento con la classe "artists"
+      var artists = document.querySelector('.artists');
+      if (artists.style.maxHeight) {
+        // Se l'altezza massima è già impostata, rimuovila per nascondere gli artisti
+        artists.style.maxHeight = null;
+      } else {
+        // Altrimenti, imposta l'altezza massima per far apparire gli artisti con l'animazione
+        artists.style.maxHeight = artists.scrollHeight + "px";
+      }
+    });
+
+    document.addEventListener("DOMContentLoaded", function() {
+      // Imposta manualmente l'altezza massima delle canzoni in base al loro contenuto
+      var songs = document.querySelector('.song-list');
+      songs.style.maxHeight = songs.scrollHeight + "px";
+    });
+
+    document.getElementById('songs-title').addEventListener('click', function() {
+      var songs = document.querySelector('.song-list');
+      if (songs.style.maxHeight) {
+        songs.style.maxHeight = null;
+      } else {
+        songs.style.maxHeight = songs.scrollHeight + "px"; // Imposta l'altezza massima in base al contenuto
+      }
+    });
+    
+    // Seleziona tutti gli elementi h4
+    var albumTitles = document.querySelectorAll('.album-item h4');
+
+    // Itera su ciascun elemento
+    albumTitles.forEach(function(title) {
+    // Imposta la lunghezza massima del testo consentita prima di cambiare il tag
+    var maxLength = 30;
+
+    // Controlla la lunghezza del testo all'interno dell'h4
+    if (title.textContent.length > maxLength) {
+        // Crea un nuovo elemento h5
+        var newTitle = document.createElement('h5');
+        // Copia il contenuto dell'h4 nell'h5
+        newTitle.textContent = title.textContent;
+        // Sostituisci l'h4 con l'h5
+        title.parentNode.replaceChild(newTitle, title);
+    }
+    });
+
+  </script>
+<script>
+  // Seleziona tutti gli elementi h4
+  var albumTitles = document.querySelectorAll('.playlist-item h4');
+
+  // Itera su ciascun elemento
+  albumTitles.forEach(function(title) {
+  // Imposta la lunghezza massima del testo consentita prima di cambiare il tag
+  var maxLength = 30;
+
+  // Controlla la lunghezza del testo all'interno dell'h4
+  if (title.textContent.length > maxLength) {
+      // Crea un nuovo elemento h5
+      var newTitle = document.createElement('h5');
+      // Copia il contenuto dell'h4 nell'h5
+      newTitle.textContent = title.textContent;
+      // Sostituisci l'h4 con l'h5
+      title.parentNode.replaceChild(newTitle, title);
+  }
+  });
+</script>
+<script>
+  function Player(name, artist) {
+    var targetIframe = parent.document.getElementById('right');
+    targetIframe.src = 'http://localhost:8000/player/' + name + '/' + artist;
+  }
+
+  function preventPlayer(event) {
+    event.stopPropagation();
+  }
+
+  function Saved() {
+    // Redirect the entire page to the saved page, not only the iframe
+    parent.location.href = 'http://localhost:8000/local';
+  }
+</script>
+</body>
+</html>
+

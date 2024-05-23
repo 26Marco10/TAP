@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Spotify</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #191414; /* Background nero */
+      color: #1DB954; /* Testo verde Spotify */
+    }
+    header {
+      background-color: #000;
+      color: #1DB954; /* Testo bianco */
+      padding: 1px;
+      text-align: center;
+    }
+    nav {
+      background-color: #212121; /* Grigio scuro */
+      padding: 7px;
+      text-align: center;
+    }
+    nav ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+    nav ul li {
+      display: inline;
+      margin: 0 10px;
+    }
+    nav ul li a {
+      color: #fff;
+      text-decoration: none;
+      transition: color 0.3s ease; /* Transizione del colore */
+    }
+    nav ul li a:hover {
+      color: #1DB954; /* Cambio di colore al passaggio del mouse */
+      cursor: pointer;
+    }
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 5px;
+    }
+    .song-list {
+      list-style: none;
+      padding: 0;
+      margin-top: 30px;
+    }
+    .song-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px; /* Ridotto lo spazio tra le canzoni */
+      border-bottom: 1px solid #212121; /* Bordo per separare le canzoni */
+      padding-bottom: 10px; /* Aggiunto spazio sotto ogni canzone */
+      background-color: rgb(68, 68, 68); 
+      border-radius: 10px;
+      transition: transform 0.3s ease; /* Aggiungi una transizione per un effetto fluido */
+    }
+    .song-item:hover {
+      background-color: white;
+      cursor: pointer;
+    }
+    .song-item:hover h4, .song-item:hover p {
+      color: black;
+    }
+    .song-item img {
+      width: 55px;
+      height: 55px;
+      margin-right: 10px;
+      margin-top: 9px;
+      margin-left: 7px;
+      object-fit: cover; /* Per riempire il contenitore con l'immagine */
+      border-radius: 6px; /* Bordo arrotondato per l'immagine */
+    }
+    .song-item .song-details {
+      flex-grow: 1; /* Flessibilità per occupare lo spazio disponibile */
+    }
+    .song-item h4{
+      margin: 0; /* Rimozione del margine */
+      color: white; /* Testo bianco */
+    }
+    .song-item p {
+      margin: 0; /* Rimozione del margine */
+      color: rgb(159, 152, 152); /* Testo bianco */
+    }
+    .playlist-heading {
+      color: #1DB954; /* Testo bianco */
+    }
+    .download-button {
+      color: #1DB954;
+      font-size: 20px;
+      margin-right: 14px;
+    }
+    #image_album {
+      width: 200px;
+      height: 200px;
+      border-radius: 20px;
+      margin: 0 auto;
+      display: block;
+    }
+
+    .download-button_1 {
+      color: #1DB954;
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h2>My Spotify</h2>
+  </header>
+
+  <nav>
+    <ul>
+      <li><a href="http://localhost:8000/home">Home</a></li>
+      <li><a href="http://localhost:8000/search">Browse</a></li>
+      <li><a href="http://localhost:8000/playlists">Your Library</a></li>
+      <li><a href="http://localhost:8000/favorites">Favorites</a></li>
+      <li><a onclick="Saved()">Saved</a></li>
+    </ul>
+  </nav>
+
+  <div class="container">
+    <div style="text-align: center;">
+        <h2 style="color: rgb(89, 255, 200);">{{ album.name }}</h2>
+        <img id="image_album" src="{{ album.image }}" alt="{{ album.name }}">  
+        <br>
+        <a href="http://localhost:8000/download_all_album/{{album.id}}/{{album.name}}" class="download-button_1"><i class="fas fa-download"></i></a>            
+    </div>
+
+    <ul class="song-list">
+      <!-- Per le canzoni, utilizzare lo stesso stile dei risultati di Spotify -->
+      {% for song in songs %}
+        <li class="song-item" onclick='Player("{{ song.name }}","{{ song.artist }}")'>
+            <img src="{{ song.image }}" alt="{{ song.name }}">
+            <div class="song-details">
+                <h4 style="padding-top: 6px;">{{ song.name }}</h4>
+                <p>{{ song.artist }}</p>
+            </div>
+            <a href="http://localhost:8000/download_album/{{album.name}}/{{ song.name }}/{{ song.artist }}" class="download-button" onclick="preventPlayer(event)"><i class="fas fa-download"></i></a>
+        </li>    
+      {% endfor %}
+    </ul>
+  </div>
+  <script>
+    function Player(name, artist) {
+      var targetIframe = parent.document.getElementById('right');
+      targetIframe.src = 'http://localhost:8000/player_album/{{album.id}}/' + name + '/' + artist;
+    }
+  
+    function preventPlayer(event) {
+      event.stopPropagation();
+    }
+
+    function Saved() {
+      // Redirect the entire page to the saved page, not only the iframe
+      parent.location.href = 'http://localhost:8000/local';
+    }
+  </script>
+</body>
+</html>

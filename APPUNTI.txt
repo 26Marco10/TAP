@@ -1,0 +1,44 @@
+TAP
+Data ingestion: log stash
+Data streaming: Kafka
+Data processing: spark
+Data indexing: elasticsearch
+Data visualization: kibana
+
+data ingestion: Data ingestion is the process of obtaining and importing data for immediate use or storage in a database.
+
+Message-oriented middleware (MOM): Software or hardware infrastructure supporting sending and receiving messages between distributed systems.
+                                   può prendere messaggi da una risorsa e inviarli a solo una risorsa con una Middleware. Per inviare dal destinatario
+                                   alla sorgente un messaggio ci vuole un altro middleware.
+Streaming Processing: prendo messaggi da più risorse e li invio a più destinazioni con un solo middleware.
+
+kafka: il client manda un messaggio con destinazione server1 a kafka. Sarà kafka a inviarlo a server1
+kafka streams: il client manda un messaggio a kafka. Sarà kafka a decidere in base a delle operazioni a quale server inviarlo.
+kafka connect: 
+
+docker image ls
+docker container ls -a
+docker ps (per vedere i container che stanno runnando)
+docker build -t nome_immagine . (Crea l'immagine con il dockerfile)
+docker run --rm -p 8000:8000 nome_immagine  (aggiungi -it se vuoi una shell interattiva) (-p per la porta di myspotify) 
+docker run --rm -p 8000:8000 -v nome_volume:percorso_cartella nome_immagine (per inserire anche il volume per una cartella)
+docker-compose up (per installare le immagini da un docker-compose.yml)
+
+per logstash:
+docker run --rm -it 
+docker run --rm -it --hostname="logstash" logstash (per dargli l'hostname)
+
+kafka:
+docker-compose up -d (-d per creare i container in background)
+docker exec -it kafka /opt/kafka/bin/kafka-topics.sh --create --zookeeper zookeeper:2181 --replication-factor 1 --partitions 1 --topic my-topic (crea il topic)
+docker exec -it kafka /opt/kafka/bin/kafka-console-producer.sh --broker-list localhost:9092 --topic my-topic (producer del topic)
+docker exec -it kafka /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic my-topic --from-beginning (consumer del topic) (togli --from-beginning se non vuoi che prenda anche i messaggi passati)
+docker-compose down --volumes (per distruggere i container creati dall'up, cancella anche i volumi)
+localhost:8080 per vedere la gui di kafka
+
+spark:
+docker-compose up -d
+docker cp -L your_python_program.py spark-spark-master-1:/opt/bitnami/spark/your_python_program.py (per copiare il file python nel master)
+docker logs spark-spark-master-1 (per trovare l'indirizzo di spark (spark://172.18.0.2:7077))
+docker-compose exec spark-master spark-submit --master spark://172.18.0.2:7077 your_python_program.py (per eeguire il programma your_python_program)
+docker-compose down

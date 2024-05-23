@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Player</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            position: absolute;
+            left: auto;
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .song {
+            margin-bottom: 20px;
+        }
+
+        .song img {
+            width: 90%;
+            border-radius: 10px;
+        }
+
+        .song h3 {
+            margin-top: 60px;
+            font-size: 25px;
+            color: rgb(0, 184, 49);
+        }
+        .song h4 {
+            margin-top: 5px;
+            color: darkgray;
+        }
+
+        .audio-player {
+            position: fixed;
+            bottom: 100px;
+            top: 65%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 20px;
+            border-radius: 10px;
+            width: 400px;
+            text-align: center;
+            z-index: 1000;
+        }
+
+        #player {
+            width: 100%;
+        }
+
+        .controls button {
+            background-color: transparent;
+            color: #1DB954;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            margin: 0 10px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .controls button:hover {
+            color: #fff;
+        }
+
+        .progress-bar {
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        input[type="range"]::-webkit-slider-runnable-track {
+            background: linear-gradient(to right, #616161 0%,#1DB954 100%);
+            border-radius: 5px;
+            height: 5px;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            margin-top: -5px;
+            background-color: #1DB954;
+            height: 15px;
+            width: 15px;
+            border-radius: 50%;
+        }
+
+        input[type="range"]:hover::-webkit-slider-thumb {
+            background-color: #0cff69;
+        }
+
+        
+
+        #video-container {
+            visibility: hidden;
+            position: absolute;
+            top: 214px;
+            left: 11%;
+            border-radius: 10px;
+            margin-bottom: 22px;
+        }
+
+        /*metti a sinistra il currentTime e a destra il duration*/
+        #currentTime {
+            color: #1DB954;
+            float: left;
+        }
+
+        #duration {
+            color: #1DB954;
+            float: right;
+        }
+        
+        .control-button {
+            background-color: transparent;
+            color: #1DB954;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .control-button:hover {
+            background-color: #0cff69;
+        }
+
+        .control-button i {
+            margin-right: 5px;
+        }
+
+        .for-color {
+            background-color: #000100;
+            border-radius: 10px;
+            border: 2px solid #1DB954;
+            padding-top: 10px;
+            padding-bottom: 20px;
+            padding-left: 5px;
+            padding-right: 5px;
+        }
+
+        .lyrics {
+            display: none;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #000100;
+            border: 2px solid #1DB954;
+            white-space: pre-wrap;
+            overflow: auto;
+            position: absolute;
+            top: 73%;
+            z-index: 1;
+            margin-bottom: 200px;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="song">
+            <button class="control-button" onclick="showVideo()">
+                <i class="fas fa-video"></i> 
+            </button>
+            <button class="control-button" onclick="showImage()">
+                <i class="fas fa-image"></i> 
+            </button>
+            <button class="control-button" onclick="showText()">
+                <i class="fas fa-music"></i>
+            </button>
+            <h3>{{ song.name }}</h3>
+            <h4>{{ song.artist }}</h4>
+            <img id="song-image" src="{{ song.image }}" alt="{{ song.name }}">
+        </div>
+    </div>
+    <div id="video-container">
+        <iframe width="400"  height="400" src="https://www.youtube.com/embed/{{song.link}}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    </div>
+    
+    <div class="audio-player">
+        <div class="for-color">
+            <div class="controls"> 
+                <button >
+                    <i class="fas fa-step-backward"></i>
+                </button> 
+                <button onclick="StartPauseVideo()">
+                    <i id="play-pause-icon" class="fas fa-pause"></i>
+                </button>
+                <button >
+                    <i class="fas fa-step-forward"></i>
+                </button>
+            </div>
+            <div class="progress-bar">
+                <input id="progress-bar-fill" class="progress-bar-fill" type="range" min="0" max="100" value="0" step="1" onchange="youTubePlayerCurrentTimeChange(this.value);" >
+            </div>
+            <div id="currentTime">Tempo corrente</div>
+            <div id="duration">Durata</div>
+        </div>
+        
+    </div>
+    <div class="lyrics">
+        <pre>{{ song.lyrics }}</pre>
+        <div>
+
+
+
+
+
+
+
+
+
+
+
+        </div>
+    </div>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</body>
+<script src="https://www.youtube.com/iframe_api"></script>
+<script>
+    let player;
+    const playPauseIcon = document.getElementById('play-pause-icon');
+    const progress_bar = document.getElementById('progress-bar-fill');
+    const currentTime = document.getElementById('currentTime');
+    const duration = document.getElementById('duration');
+
+    function onYouTubeIframeAPIReady() {
+        // Crea un nuovo player
+        player = new YT.Player('video-container', {
+            height: '400',
+            width: '400',
+            videoId: '{{ song.link }}',
+            playerVars: {
+                'autoplay': 1,
+                'controls': 0,
+                'showinfo': 0,
+                'rel': 0,
+                'modestbranding': 1,
+                'playsinline': 1
+            },
+            events: {
+                'onReady': onPlayerReady,
+                'onStateChange': onPlayerStateChange
+            }
+        });
+    }
+
+    function onPlayerReady(event) {
+        // Esegui il video quando il player è pronto
+        player.playVideo();
+    }
+
+    function onPlayerStateChange(event) {
+        // Gestisci gli eventi di cambio stato del player
+        console.log('Stato del player cambiato');
+        if (event.data === YT.PlayerState.ENDED) {
+            //ricomincia il video
+            player.seekTo(0);
+        }
+    }
+
+    function StartPauseVideo() {
+        if (player.getPlayerState() === YT.PlayerState.PLAYING) {
+            player.pauseVideo();
+            playPauseIcon.className = 'fas fa-play';
+        } else {
+            player.playVideo();
+            playPauseIcon.className = 'fas fa-pause';
+        }
+    }
+
+    function youTubePlayerCurrentTimeChange(value) {
+        player.seekTo(value*player.getDuration()/100, true);
+    }
+
+    //ogni secondo aggiorna il valore della progress bar con il tempo corrente del video
+    setInterval(function() {
+        progress_bar.value = player.getCurrentTime()*100/player.getDuration();
+    }, 1000);
+
+    //ogni secondo aggiorna il valore di currentTime con il tempo corrente del video
+    setInterval(function() {
+        //falli in minuti e secondi a 3 cifre, per esempio 1:01
+        let minutes = Math.floor(player.getCurrentTime() / 60);
+        let seconds = Math.floor(player.getCurrentTime() - minutes * 60);
+        currentTime.innerHTML = minutes + ':' + seconds;
+    }, 1000);
+
+    //ogni secondo aggiorna il valore di duration con la durata del video
+    setInterval(function() {
+        //falli in minuti e secondi
+        let minutes = Math.floor(player.getDuration() / 60);
+        let seconds = Math.floor(player.getDuration() - minutes * 60);
+        duration.innerHTML = minutes + ':' + seconds;
+    }, 1000);
+
+    function showVideo() {
+        const videoContainer = document.getElementById('video-container');
+        const songImage = document.getElementById('song-image');
+
+        videoContainer.style.visibility = 'visible';
+        songImage.style.visibility = 'hidden';
+    }
+
+    function showImage() {
+        const videoContainer = document.getElementById('video-container');
+        const songImage = document.getElementById('song-image');
+
+        videoContainer.style.visibility = 'hidden';
+        songImage.style.visibility = 'visible';
+    }
+
+    function showText() {
+        const lyrics = document.querySelector('.lyrics');
+        if (lyrics.style.display === 'none') {
+            lyrics.style.display = 'block';
+        } else {
+            lyrics.style.display = 'none';
+        }
+    }
+
+
+    console.log('{{ song.playlist_id }}', '{{ song.prev_name }}', '{{ song.prev_artist }}', '{{ song.next_name }}', '{{ song.next_artist }}');
+
+    function changeSong(direction) {
+        if (direction === "next") {
+            playlist_id = "{{ song.playlist_id }}";
+            next_name = "{{ song.next_name }}";
+            next_artist = "{{ song.next_artist }}";
+            
+            next_name = next_name.replace("&#39;", "'");
+            next_artist = next_artist.replace("&#39;", "'");
+
+            window.location.href = 'http://localhost:8000/player/' + playlist_id + '/' + next_name + '/' + next_artist;
+        } else {
+            playlist_id = '{{ song.playlist_id }}';
+            previous_name = '{{ song.prev_name }}';
+            previous_artist = '{{ song.prev_artist }}';
+
+            previous_name = previous_name.replace("&#39;", "'");
+            previous_artist = previous_artist.replace("&#39;", "'");
+            
+            window.location.href = 'http://localhost:8000/player/' + playlist_id + '/' + previous_name + '/' + previous_artist;
+        }
+    }
+
+    function nextSong() {
+        playlist_id = "{{ song.playlist_id }}";
+        next_name = "{{ song.next_name }}";
+        next_artist = "{{ song.next_artist }}";
+        
+        next_name = next_name.replace("&#39;", "'");
+        next_artist = next_artist.replace("&#39;", "'");
+
+        window.location.href = 'http://localhost:8000/player/' + playlist_id + '/' + next_name + '/' + next_artist;
+    }
+
+    
+
+</script>
+</html>

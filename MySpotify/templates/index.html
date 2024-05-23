@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Spotify</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: black;
+            display: flex;
+            flex-direction: column; /* Impostare la direzione della flessione a colonna */
+        }
+        iframe {
+            border: none;
+            height: 100vh; /* Altezza pari all'intera altezza della finestra del browser */
+        }
+        #left{
+            width: 70%; /* Larghezza del 70% del container (il body) */
+            overflow-y: scroll; /* Abilita lo scrolling verticale se necessario */
+        }
+        #right {
+            width: 30%; /* Larghezza del 30% del container (il body) */
+            position: fixed; /* Posizione fissa rispetto alla finestra del browser */
+            top: 0; /* Fissare l'iframe in alto */
+            right: 0; /* Fissare l'iframe alla destra */
+        }
+
+        /* Nascondi le barre di scorrimento */
+        body::-webkit-scrollbar {
+            width: 0; /* Nascondi la barra di scorrimento verticale */
+            height: 0; /* Nascondi la barra di scorrimento orizzontale */
+        }
+
+        /* Facoltativo: Stile aggiuntivo per il track delle barre di scorrimento */
+        body::-webkit-scrollbar-track {
+            background: transparent; /* Colore dello sfondo del track */
+        }
+    </style>
+</head>
+<body>
+    <iframe id="left" src="http://localhost:8000/home" frameborder="0"></iframe>
+    <iframe id="right" src="http://localhost:8000/player" frameborder="0"></iframe>
+</body>
+</html>

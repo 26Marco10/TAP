@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Spotify</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #191414; /* Background nero */
+      color: #1DB954; /* Testo verde Spotify */
+    }
+    header {
+      background-color: #000;
+      color: #1DB954; /* Testo bianco */
+      padding: 1px;
+      text-align: center;
+    }
+    nav {
+      background-color: #212121; /* Grigio scuro */
+      padding: 7px;
+      text-align: center;
+    }
+    nav ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+    nav ul li {
+      display: inline;
+      margin: 0 10px;
+    }
+    nav ul li a {
+      color: #fff;
+      text-decoration: none;
+      transition: color 0.3s ease; /* Transizione del colore */
+    }
+    nav ul li a:hover {
+      color: #1DB954; /* Cambio di colore al passaggio del mouse */
+      cursor: pointer;
+    }
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 20px;
+    }
+    .playlist {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      grid-gap: 20px;
+    }
+    .playlist-item {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+      background-color: rgb(68, 68, 68);
+      color: white;
+      width: 200px;
+      height: 280px;
+      transition: transform 0.3s ease; /* Aggiungi una transizione per un effetto fluido */
+      border-radius: 10px;
+    }
+    .playlist-item:hover {
+      transform: scale(1.1); /* Rendi la playlist leggermente più grande al passaggio del mouse */
+    }
+    .playlist-item a {
+      text-decoration: none; /* Rimuove la sottolineatura del testo quando è un link */
+      color: white; /* Colore del testo per i link */
+    }
+    .playlist-item img {
+      max-width: 100%;
+      max-height: 200px; /* Limita l'altezza dell'immagine */
+      border-radius: 10px; /* Aggiunge bordi arrotondati all'immagine */
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h2>My Spotify</h2>
+  </header>
+
+  <nav>
+    <ul>
+      <li><a href="http://localhost:8000/home">Home</a></li>
+      <li><a href="http://localhost:8000/search">Browse</a></li>
+      <li><a href="http://localhost:8000/playlists">Your Library</a></li>
+      <li><a href="http://localhost:8000/favorites">Favorites</a></li>
+      <li><a onclick="Saved()">Saved</a></li>
+    </ul>
+  </nav>
+
+  <div class="container">
+    <h2>Featured Playlists</h2>
+    <div class="playlist">
+        {% for playlist in playlists %}
+        <a href="http://localhost:8000/playlist/{{ playlist.id }}/{{playlist.name}}" class="playlist-link" style="text-decoration: none;">
+        <div class="playlist-item">
+          <img src="{{ playlist.image }}" alt="{{ playlist.name }}">
+          <h3>{{ playlist.name }}</h3>
+        </div>
+        </a>
+        {% endfor %}
+      <!-- More playlist items can be added here -->
+    </div>
+  </div>
+</body>
+<script>
+  // Seleziona tutti gli elementi h4
+  var albumTitles = document.querySelectorAll('.playlist-item h3');
+
+  // Itera su ciascun elemento
+  albumTitles.forEach(function(title) {
+  // Imposta la lunghezza massima del testo consentita prima di cambiare il tag
+  var maxLength = 30;
+
+  // Controlla la lunghezza del testo all'interno dell'h4
+  if (title.textContent.length > maxLength) {
+      // Crea un nuovo elemento h5
+      var newTitle = document.createElement('h5');
+      // Copia il contenuto dell'h4 nell'h5
+      newTitle.textContent = title.textContent;
+      // Sostituisci l'h4 con l'h5
+      title.parentNode.replaceChild(newTitle, title);
+  }
+  });
+
+  function Saved() {
+    // Redirect the entire page to the saved page, not only the iframe
+    parent.location.href = 'http://localhost:8000/local';
+  }
+</script>
+</html>

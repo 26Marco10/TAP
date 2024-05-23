@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Player Audio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        .audio-player {
+            display: flex;
+            align-items: center;
+            background-color: #121212;
+            color: #1DB954;
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            margin: 0 auto;
+        }
+
+        .audio-info {
+            flex: 1;
+            text-align: left;
+            margin-right: 20px;
+        }
+
+        .audio-info div {
+            margin-bottom: 5px;
+        }
+
+        .audio-name {
+            font-size: 21px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .controls {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+
+        .progress-bar {
+            flex: 1;
+            text-align: center;
+        }
+
+        #player {
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .controls button {
+            background-color: transparent;
+            color: #1DB954;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            margin: 5px;
+            transition: color 0.3s ease;
+        }
+
+        .controls button:hover {
+            color: #fff;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+            cursor: pointer;
+            width: 25rem;
+        }
+
+        input[type="range"]:focus {
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-runnable-track {
+            background-color: #585858;
+            border-radius: 0.5rem;
+            height: 0.5rem;  
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            margin-top: -12px;
+            background-color: #17913b;
+            height: 2rem;
+            width: 1rem;
+            border-radius: 0.5rem;
+        }
+
+        input[type="range"]:hover::-webkit-slider-thumb {   
+            border: 1px solid #0cff69;
+            outline: 3px solid #0cff69;
+            outline-offset: 0.125rem; 
+        }
+    </style>
+</head>
+<body>
+    <div class="audio-player">
+        <div class="audio-info">
+            <div class="audio-name"></div>
+        </div>
+        <audio id="player" src="{{ url_for('static', filename=song_path) }}" type="audio/mpeg"></audio>
+        <div class="controls"> 
+            <button onclick="previous()">
+                <i class="fa fa-backward"></i>
+            </button> 
+            <button onclick="togglePlayPause()">
+                <i id="play-pause-icon" class="fa fa-play"></i>
+            </button>
+            <button onclick="next()">
+                <i class="fa fa-forward"></i>
+            </button>
+        </div>
+        <div class="progress-bar">
+            <input id="progress-bar-fill" class="progress-bar-fill" type="range" min="0" max="100" value="0" step="1">
+        </div>
+    </div>
+
+    <script>
+        const local_player = document.getElementById('player');
+        const playPauseIcon = document.getElementById('play-pause-icon');
+        const progressBarFill = document.getElementById('progress-bar-fill');
+
+        function togglePlayPause() {
+            if (local_player.paused) {
+                local_player.play();
+                playPauseIcon.className = 'fa fa-pause';
+            } else {
+                local_player.pause();
+                playPauseIcon.className = 'fa fa-play';
+            }
+        }
+
+        progressBarFill.addEventListener('input', function() {
+            const newTime = progressBarFill.value * local_player.duration / 100;
+            local_player.currentTime = newTime;
+        });
+
+        local_player.addEventListener('timeupdate', function() {
+            const currentTime = (local_player.currentTime * 100) / local_player.duration;
+            progressBarFill.value = currentTime;
+        });
+
+    </script>
+</body>
+<script>
+    //se audio-name è più grande di 47 caratteri, allora lo taglia e aggiunge "..."
+    var audioName = document.querySelector('.audio-name');
+    if (audioName.textContent.length > 47) {
+        audioName.textContent = audioName.textContent.substring(0, 32) + '...';
+    }
+</script>
+</html>

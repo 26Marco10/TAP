@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Spotify</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #191414; /* Background nero */
+      color: #1DB954; /* Testo verde Spotify */
+    }
+    header {
+      background-color: #000;
+      color: #1DB954; /* Testo bianco */
+      padding: 1px;
+      text-align: center;
+    }
+    nav {
+      background-color: #212121; /* Grigio scuro */
+      padding: 7px;
+      text-align: center;
+    }
+    nav ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+    nav ul li {
+      display: inline;
+      margin: 0 10px;
+    }
+    nav ul li a {
+      color: #fff;
+      text-decoration: none;
+      transition: color 0.3s ease; /* Transizione del colore */
+      cursor: pointer;
+    }
+    nav ul li a:hover {
+      color: #1DB954; /* Cambio di colore al passaggio del mouse */
+    }
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 20px;
+    }
+    #container-playlists {
+      display: none;
+    }
+    .playlist {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      grid-gap: 20px;
+    }
+    .playlist-item {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      border: 1px solid #ccc;
+      padding: 10px;
+      background: linear-gradient(to bottom, red, black); /* Sfumatura lineare dal rosso al nero */
+      color: white;
+      width: 200px;
+      height: 200px;
+      transition: transform 0.3s ease;
+      border-radius: 10px;
+    }
+
+
+
+    .playlist-item:hover {
+      transform: scale(1.1); /* Rendi la playlist leggermente più grande al passaggio del mouse */
+    }
+    .playlist-item a {
+      text-decoration: none; /* Rimuove la sottolineatura del testo quando è un link */
+      color: white; /* Colore del testo per i link */
+    }
+
+  </style>
+  <style>
+    .song-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .song-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px; /* Ridotto lo spazio tra le canzoni */
+      border-bottom: 1px solid #212121; /* Bordo per separare le canzoni */
+      padding-bottom: 10px; /* Aggiunto spazio sotto ogni canzone */
+      background-color: rgb(68, 68, 68); 
+      border-radius: 10px;
+      transition: transform 0.3s ease; /* Aggiungi una transizione per un effetto fluido */
+    }
+    .song-item:hover {
+      background-color: white;
+      cursor: pointer;
+    }
+    .song-item:hover h4, .song-item:hover p {
+      margin-left: 10px;
+      color: black;
+    }
+    .song-item .song-details {
+      flex-grow: 1; /* Flessibilità per occupare lo spazio disponibile */
+    }
+    .song-item h4 {
+      margin:0;
+      margin-left: 10px; /* Aggiungi un margine sinistro di 10px */
+      color: white; /* Testo bianco */
+    }
+
+    .song-item p {
+      margin: 0;
+      margin-left: 10px; /* Aggiungi un margine sinistro di 10px */
+      color: rgb(159, 152, 152); /* Testo bianco */
+    }
+    .download-button {
+      color: #1DB954;
+      font-size: 20px;
+      margin-right: 14px;
+      margin-top: 5px;
+    }
+
+  </style>
+
+  <style>
+    #container-albums {
+      display: none;
+    }
+    .album {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      grid-gap: 20px;
+    }
+    .album-item {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      border: 1px solid #ccc;
+      padding: 10px;
+      background: linear-gradient(to bottom, rgb(0, 0, 119), rgb(115, 115, 115)); /* Sfumatura lineare dal rosso al nero */
+      color: white;
+      width: 200px;
+      height: 200px;
+      transition: transform 0.3s ease;
+      border-radius: 10px;
+    }
+
+
+
+    .album-item:hover {
+      transform: scale(1.1); /* Rendi la playlist leggermente più grande al passaggio del mouse */
+    }
+    .album-item a {
+      text-decoration: none; /* Rimuove la sottolineatura del testo quando è un link */
+      color: white; /* Colore del testo per i link */
+    }
+
+  </style>
+</head>
+<body>
+
+  <header>
+    <h2>My Spotify</h2>
+  </header>
+
+  <nav>
+    <ul>
+      <li><a href="http://localhost:8000/no_internet">Home</a></li>
+      <li><a onclick="Online()">Online</a></li>
+    </ul>
+  </nav>
+
+  <div class="container" id="container-songs">
+    <h2 class="playlist-heading">{{playlist_name}}</h2>
+    <ul class="song-list">
+      <!-- Per le canzoni, utilizzare lo stesso stile dei risultati di Spotify -->
+      {% for song in songs %}
+        <li class="song-item" onclick='Player("{{ song.name }}","{{ song.artist }}","{{playlist_name}}")'>
+            <div class="song-details">
+                <h4 style="padding-top: 6px;">{{ song.name }}</h4>
+                <p>{{ song.artist }}</p>
+            </div>
+            <a href="http://localhost:8000/delete_from_playlist/{{playlist_name}}/{{song.name}}/{{song.artist}}" class="download-button" onclick="delete_song(event, '{{song.name}}','{{song.artist}}', '{{playlist_name}}')"><i class="fas fa-trash"></i></a>
+        </li>    
+      {% endfor %}
+    </ul>
+    <br><br><br><br><br>
+  </div>
+
+
+
+</body>
+
+<script>
+  function Player(song, artist, playlist_name) {
+    var targetIframe = parent.document.getElementById('iframe2');
+    targetIframe.src = 'http://localhost:8000/player_local/playlists/' + playlist_name + '/' + song + '/' + artist;
+  }
+</script>
+
+<script>
+  // Seleziona tutti gli elementi h4
+  var albumTitles = document.querySelectorAll('.playlist-item h3');
+
+  // Itera su ciascun elemento
+  albumTitles.forEach(function(title) {
+  // Imposta la lunghezza massima del testo consentita prima di cambiare il tag
+  var maxLength = 30;
+
+  // Controlla la lunghezza del testo all'interno dell'h4
+  if (title.textContent.length > maxLength) {
+      // Crea un nuovo elemento h5
+      var newTitle = document.createElement('h5');
+      // Copia il contenuto dell'h4 nell'h5
+      newTitle.textContent = title.textContent;
+      // Sostituisci l'h4 con l'h5
+      title.parentNode.replaceChild(newTitle, title);
+  }
+  });
+
+  function Online() {
+    // Redirect the entire page to the saved page, not only the iframe
+    parent.location.href = 'http://localhost:8000/';
+  }
+
+  function delete_song(event, song, artist, playlist_name) {
+    event.preventDefault(); // Impedisce il comportamento predefinito del click
+    window.location.href = 'http://localhost:8000/delete_from_playlist/' + playlist_name + '/' + song + '/' + artist;
+    event.stopPropagation();
+  }
+</script>
+</html>
