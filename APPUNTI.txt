@@ -25,8 +25,9 @@ docker run --rm -p 8000:8000 -v nome_volume:percorso_cartella nome_immagine (per
 docker-compose up (per installare le immagini da un docker-compose.yml)
 
 per logstash:
-docker run --rm -it 
+docker run --rm -it logstash
 docker run --rm -it --hostname="logstash" logstash (per dargli l'hostname)
+docker run --rm -it -p 5959:5959 logstash (per dargli una porta in uscita ed entrata)
 
 kafka:
 docker-compose up -d (-d per creare i container in background)
@@ -42,3 +43,4 @@ docker cp -L your_python_program.py spark-spark-master-1:/opt/bitnami/spark/your
 docker logs spark-spark-master-1 (per trovare l'indirizzo di spark (spark://172.18.0.2:7077))
 docker-compose exec spark-master spark-submit --master spark://172.18.0.2:7077 your_python_program.py (per eeguire il programma your_python_program)
 docker-compose down
+

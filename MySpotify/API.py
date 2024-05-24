@@ -16,6 +16,9 @@ from urllib.parse import quote
 import lyricsgenius
 import html
 import os
+from concurrent.futures import ThreadPoolExecutor
+import logstash
+import logging
 
 load_dotenv()
 
@@ -23,7 +26,19 @@ client_id = os.getenv("CLIENT_ID")
 client_secret = os.getenv("CLIENT_SECRET")
 genius_token = os.getenv("GENIUS_API_TOKEN")
 
+host = 'localhost'
+port = 5959
+test_logger = logging.getLogger('logstash')
+test_logger.setLevel(logging.INFO)
+test_logger.addHandler(logstash.TCPLogstashHandler(host, port, version=1))
+test_logger.info('My test logstash message, with extra data', extra={'test_string': 'test', 'test_int': 1})
+
 app = Flask(__name__)
+
+
+
+executor = ThreadPoolExecutor(max_workers=10)  # Puoi modificare il numero di worker secondo le tue necessità
+
 
 def get_token(code):
     auth_string = client_id + ":" + client_secret
@@ -259,6 +274,30 @@ def delete_song_from_favorite(token, song_id):
     result = requests.delete(url, headers=headers, params=params)
     return result
 
+def delivery_report(err, msg):
+    if err is not None:
+        print('Message delivery failed: {}'.format(err))
+    else:
+        print('Message delivered to {} [{}]'.format(msg.topic(), msg.partition()))
+
+def produce_song_global_top(canzoni):
+    print("Producing songs...")
+    for song in canzoni:
+        lyrics = get_lyrics(song["track"]["name"], song["track"]["artists"][0]["name"])
+        name = song["track"]["name"]
+        artist = song["track"]["artists"][0]["name"]
+        song_id = song["track"]["id"]
+        canzone = {
+            "name": name,
+            "artist": artist,
+            "lyrics": lyrics,
+            "id": song_id
+        }
+        string_canzone = json.dumps(canzone)
+        test_logger.info(string_canzone)
+
+
+
 AUTH_URL = 'https://accounts.spotify.com/authorize'
 TOKEN_URL = 'https://accounts.spotify.com/api/token'
 REDIRECT_URI = 'http://localhost:8000/callback' 
@@ -321,16 +360,9 @@ def index():
     
     top_global = search_for_playlist(session["token"], "Top Global 50")[0]
     top_global_songs = get_playlist_songs(session["token"], top_global["id"])
-
-    songs = []
-    for song in top_global_songs:
-        lyrics = get_lyrics(song["track"]["name"], song["track"]["artists"][0]["name"])
-        name = song["track"]["name"]
-        artist = song["track"]["artists"][0]["name"]
-        song_id = song["track"]["id"]
-        songs.append({"name": name, "artist": artist, "popularity": popularity, "lyrics": lyrics, "id": song_id})
-
-    return jsonify(songs)
+    executor.submit(produce_song_global_top, top_global_songs)
+    
+    return jsonify(top_global_songs)
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=8000, debug=True)

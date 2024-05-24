@@ -39,4 +39,17 @@ services:
     depends_on:
       - kafka
 
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.13.4
+    container_name: logstash
+    volumes:
+      - ./Logstash/pipeline.conf:/usr/share/logstash/pipeline/pipeline.conf
+      - ./Logstash/logstash.yml:/usr/share/logstash/config/logstash.yml
+    ports:
+      - "5959:5959"
+    expose:
+      - "5959"
+    restart: on-failure
+    depends_on:
+      - kafka
   
