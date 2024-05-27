@@ -1,0 +1,17 @@
+# Utilizza un'immagine base con Spark pre-installato
+FROM bitnami/spark:latest
+# Aggiorna pip e installa le librerie Python necessarie
+RUN pip3 install --upgrade pip && \
+    pip3 install nltk 
+
+# Aggiungiamo il percorso di Spark al PATH
+ENV PATH="${PATH}:/opt/bitnami/spark/bin"
+
+# Copia il codice dell'applicazione nell'immagine
+COPY ./sentiment_analysis_app.py /opt/spark_app/sentiment_analysis_app.py
+
+# Imposta la directory di lavoro
+WORKDIR /opt/spark_app
+
+# Avvia l'applicazione
+CMD [ "spark-submit", "--master", "local", "sentiment_analysis_app.py" ]
