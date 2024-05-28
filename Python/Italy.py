@@ -8,6 +8,7 @@ import logstash
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from dotenv import load_dotenv
+from time import sleep
 
 # Load environment variables
 load_dotenv()
@@ -92,9 +93,13 @@ def get_lyrics(song_name, artist_name):
     else:
         return "Lyrics not found"
 
+num = 0
 def produce_song_global_top(songs):
     print("Producing songs...")
     for song in songs:
+        global num
+        num += 1
+        print(f"Producing song {num}")
         track = song["track"]
         lyrics = get_lyrics(track["name"], track["artists"][0]["name"])
         song_data = {
@@ -105,6 +110,7 @@ def produce_song_global_top(songs):
             "id": track["id"]
         }
         test_logger.info(json.dumps(song_data))
+        sleep(1)
 
 def main():
     token = get_token()
