@@ -23,6 +23,7 @@ docker build -t nome_immagine . (Crea l'immagine con il dockerfile)
 docker run --rm -p 8000:8000 nome_immagine  (aggiungi -it se vuoi una shell interattiva) (-p per la porta di myspotify) 
 docker run --rm -p 8000:8000 -v nome_volume:percorso_cartella nome_immagine (per inserire anche il volume per una cartella)
 docker-compose up (per installare le immagini da un docker-compose.yml)
+docker-compose down -v (distruggere i container creati da up con i loro volumi)
 
 per logstash:
 docker run --rm -it logstash

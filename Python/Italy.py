@@ -87,6 +87,11 @@ def get_lyrics(song_name, artist_name):
     song_name = song_name.split('[')[0].split('(')[0].strip()
     song = genius.search_song(song_name, artist_name)
 
+    # se lyrics contiene [FN# allora ritorna Lyrics not found
+    if song:
+        if song.lyrics.find("[FN#") != -1:
+            return "Lyrics not found"
+
     if song:
         lyrics = song.lyrics.split('\n', 1)[-1]
         return lyrics
