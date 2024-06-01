@@ -1,5 +1,5 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import udf, col
+from pyspark.sql.functions import udf, col, concat_ws
 from pyspark.sql.types import StringType
 import nltk
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
@@ -62,11 +62,11 @@ df = spark \
     .readStream \
     .format("kafka") \
     .option("kafka.bootstrap.servers", "kafka:9092") \
-    .option("subscribe", "old-data") \
+    .option("subscribe", "data") \
     .load()
 
-# Convertire il valore da byte a stringa
-df = df.selectExpr("CAST(value AS STRING) AS value")
+# Convertire il valore da byte a stringa e includere il timestamp
+df = df.selectExpr("CAST(value AS STRING) AS value", "timestamp")
 
 # Definire lo schema del JSON
 schema = "id STRING, name STRING, lyrics STRING, artist STRING, topic STRING"
@@ -76,7 +76,8 @@ json_df = df.selectExpr("get_json_object(value, '$.id') as id",
                         "get_json_object(value, '$.name') as name",
                         "get_json_object(value, '$.lyrics') as lyrics",
                         "get_json_object(value, '$.artist') as artist",
-                        "get_json_object(value, '$.topic') as topic")
+                        "get_json_object(value, '$.topic') as topic",
+                        "timestamp")
 
 # Applicare la funzione di preprocessing sul campo lyrics
 preprocessed_df = json_df.withColumn("cleaned_lyrics", preprocess_udf(col("lyrics")))
@@ -87,11 +88,14 @@ sentiment_df = preprocessed_df.withColumn("sentiment", sentiment_udf(col("cleane
 # Applicare la funzione di categorizzazione del sentimento sul campo sentiment
 result_df = sentiment_df.withColumn("sentiment_category", categorize_udf(col("lyrics"), col("sentiment")))
 
+# Creare una colonna per il nuovo id combinando id e timestamp
+result_df = result_df.withColumn("combined_id", concat_ws("_", col("id"), col("timestamp").cast("string")))
+
 # Configura Elasticsearch writer
 es_write_config = {
     "es.nodes": "elastic:9200",  # Replace with your Elasticsearch host
     "es.index.auto.create": True,  # Create index if it doesn't exist
-    "es.mapping.id": "id",  # Define the document ID field
+    "es.mapping.id": "combined_id",  # Define the document ID field
     "es.resource": "music_analysis"  # Specify the Elasticsearch resource
 }
 

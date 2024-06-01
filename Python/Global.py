@@ -8,6 +8,7 @@ import logstash
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from dotenv import load_dotenv
+from time import sleep
 
 # Load environment variables
 load_dotenv()
@@ -86,33 +87,43 @@ def get_lyrics(song_name, artist_name):
     song_name = song_name.split('[')[0].split('(')[0].strip()
     song = genius.search_song(song_name, artist_name)
 
+    # se lyrics contiene [FN# allora ritorna Lyrics not found
+    if song:
+        if song.lyrics.find("[FN#") != -1:
+            return "Lyrics not found"
+
     if song:
         lyrics = song.lyrics.split('\n', 1)[-1]
         return lyrics
     else:
         return "Lyrics not found"
 
+num = 0
 def produce_song_global_top(songs):
     print("Producing songs...")
     for song in songs:
+        global num
+        num += 1
+        print(f"Producing song {num}")
         track = song["track"]
         lyrics = get_lyrics(track["name"], track["artists"][0]["name"])
         song_data = {
-            "topic": "song_global_top",
+            "topic": "song_italy_top",
             "name": track["name"],
             "artist": track["artists"][0]["name"],
             "lyrics": lyrics,
             "id": track["id"]
         }
         test_logger.info(json.dumps(song_data))
+        sleep(1)
 
 def main():
     token = get_token()
-    top_global_playlist = search_for_playlist(token, "Top 50 Globale")
+    top_global_playlist = search_for_playlist(token, "Top 50 Global")
 
     if top_global_playlist:
         top_global_songs = get_playlist_songs(token, top_global_playlist["id"])
-        executor.submit(produce_song_global_top, top_global_songs)
+        produce_song_global_top(top_global_songs)
 
 if __name__ == "__main__":
     main()
