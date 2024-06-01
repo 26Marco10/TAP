@@ -15,4 +15,4 @@ COPY ./sentiment_analysis_app.py /opt/spark_app/sentiment_analysis_app.py
 WORKDIR /opt/spark_app
 
 # Avvia l'applicazione
-CMD [ "spark-submit", "--packages", "org.apache.spark:spark-sql-kafka-0-10_2.12:3.3.0,org.elasticsearch:elasticsearch-spark-30_2.12:8.2.3", "--master", "local", "sentiment_analysis_app.py" ]
+CMD [ "spark-submit", "--packages", "org.apache.spark:spark-sql-kafka-0-10_2.12:3.3.0,org.elasticsearch:elasticsearch-spark-30_2.12:8.13.4", "--master", "local", "sentiment_analysis_app.py" ]

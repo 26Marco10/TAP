@@ -24,6 +24,7 @@ docker run --rm -p 8000:8000 nome_immagine  (aggiungi -it se vuoi una shell inte
 docker run --rm -p 8000:8000 -v nome_volume:percorso_cartella nome_immagine (per inserire anche il volume per una cartella)
 docker-compose up (per installare le immagini da un docker-compose.yml)
 docker-compose down -v (distruggere i container creati da up con i loro volumi)
+docker-compose build (per ricostruire tutte le immagini)
 
 per logstash:
 docker run --rm -it logstash
