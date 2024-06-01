@@ -61,6 +61,8 @@ services:
       - kafka
       - logstash
       - elastic
+    volumes:
+      - ./Spark/checkpoint:/opt/spark/data/checkpoint
     restart: on-failure
       
   elastic:

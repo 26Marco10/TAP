@@ -87,15 +87,20 @@ sentiment_df = preprocessed_df.withColumn("sentiment", sentiment_udf(col("cleane
 # Applicare la funzione di categorizzazione del sentimento sul campo sentiment
 result_df = sentiment_df.withColumn("sentiment_category", categorize_udf(col("lyrics"), col("sentiment")))
 
-# Seleziona solo le colonne desiderate (sentiment e sentiment_category)
-final_df = result_df.select("id", "name", "lyrics", "artist", "topic", "sentiment", "sentiment_category")
+# Configura Elasticsearch writer
+es_write_config = {
+    "es.nodes": "elastic:9200",  # Replace with your Elasticsearch host
+    "es.index.auto.create": True,  # Create index if it doesn't exist
+    "es.mapping.id": "id",  # Define the document ID field
+    "es.resource": "music_analysis"  # Specify the Elasticsearch resource
+}
 
-# Stampa il dataframe risultante con il sentiment
-query = final_df \
-    .writeStream \
+checkpoint_location = "/opt/spark/data/checkpoint"  # Sostituisci con la posizione desiderata
+
+result_df.writeStream \
     .outputMode("append") \
-    .format("console") \
-    .start()
-
-query.awaitTermination()
-
+    .format("es") \
+    .options(**es_write_config) \
+    .option("checkpointLocation", checkpoint_location) \
+    .start() \
+    .awaitTermination()

@@ -123,7 +123,7 @@ def main():
 
     if top_global_playlist:
         top_global_songs = get_playlist_songs(token, top_global_playlist["id"])
-        executor.submit(produce_song_global_top, top_global_songs)
+        produce_song_global_top(top_global_songs)
 
 if __name__ == "__main__":
     main()
