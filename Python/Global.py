@@ -114,7 +114,7 @@ def produce_song_global_top(songs):
         track = song["track"]
         lyrics = get_lyrics(track["name"], track["artists"][0]["name"])
         song_data = {
-            "topic": "song_italy_top",
+            "topic": "song_global_top",
             "name": track["name"],
             "artist": track["artists"][0]["name"],
             "lyrics": lyrics,
@@ -129,11 +129,7 @@ def main():
 
     if top_global_playlist:
         top_global_songs = get_playlist_songs(token, top_global_playlist["id"])
-        for song in top_global_songs:
-            print("Lyrics of:", song["track"]["name"])
-            print(get_lyrics(song["track"]["name"], song["track"]["artists"][0]["name"]))
-            print("\n\n")
-            sleep(3)
+        produce_song_global_top(top_global_songs)
 
 if __name__ == "__main__":
     main()
