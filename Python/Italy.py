@@ -85,14 +85,19 @@ def get_playlist_songs(token, playlist_id):
 def get_lyrics(song_name, artist_name):
     genius = lyricsgenius.Genius(genius_token)
     song_name = song_name.split('[')[0].split('(')[0].strip()
-    song = genius.search_song(song_name, artist_name)
-
-    # se lyrics contiene [FN# allora ritorna Lyrics not found
+    try:
+        song = genius.search_song(song_name, artist_name)
+    except Exception as e:
+        print(f"Error: {e}")
+        return "Lyrics not found"
+        
     if song:
+        # se lyrics contiene [FN# allora ritorna Lyrics not found
         if song.lyrics.find("[FN#") != -1:
             return "Lyrics not found"
-
-    if song:
+        #se c'è 50 o più volte il carattere " nella stringa ritorna Lyrics not found
+        if song.lyrics.count('"') >= 50:
+            return "Lyrics not found"
         lyrics = song.lyrics.split('\n', 1)[-1]
         return lyrics
     else:

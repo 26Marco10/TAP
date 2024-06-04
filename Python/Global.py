@@ -82,17 +82,23 @@ def get_playlist_songs(token, playlist_id):
     response.raise_for_status()  # Raise an exception for HTTP errors
     return response.json()["items"]
 
+
 def get_lyrics(song_name, artist_name):
     genius = lyricsgenius.Genius(genius_token)
     song_name = song_name.split('[')[0].split('(')[0].strip()
-    song = genius.search_song(song_name, artist_name)
-
-    # se lyrics contiene [FN# allora ritorna Lyrics not found
+    try:
+        song = genius.search_song(song_name, artist_name)
+    except Exception as e:
+        print(f"Error: {e}")
+        return "Lyrics not found"
+        
     if song:
+        # se lyrics contiene [FN# allora ritorna Lyrics not found
         if song.lyrics.find("[FN#") != -1:
             return "Lyrics not found"
-
-    if song:
+        #se c'è 50 o più volte il carattere " nella stringa ritorna Lyrics not found
+        if song.lyrics.count('"') >= 50:
+            return "Lyrics not found"
         lyrics = song.lyrics.split('\n', 1)[-1]
         return lyrics
     else:
@@ -123,7 +129,11 @@ def main():
 
     if top_global_playlist:
         top_global_songs = get_playlist_songs(token, top_global_playlist["id"])
-        produce_song_global_top(top_global_songs)
+        for song in top_global_songs:
+            print("Lyrics of:", song["track"]["name"])
+            print(get_lyrics(song["track"]["name"], song["track"]["artists"][0]["name"]))
+            print("\n\n")
+            sleep(3)
 
 if __name__ == "__main__":
     main()
