@@ -4,6 +4,7 @@ from pyspark.sql.types import StringType
 import nltk
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import re
+from nrclex import NRCLex
 
 # Specifica un percorso alternativo per il download
 nltk.data.path.append('/tmp/nltk_data')
@@ -52,10 +53,18 @@ def categorize_sentiment(lyrics, compound_score):
     else:
         return 'negative'
 
+def emotion_analysis(text):
+    if text:
+        emotion = NRCLex(text).top_emotions
+        if emotion:
+            return emotion[0][0]
+        return "not applicable"
+
 # Creare le UDF
 preprocess_udf = udf(preprocess_text, StringType())
 sentiment_udf = udf(sentiment_analysis, StringType())
 categorize_udf = udf(lambda lyrics, sentiment: categorize_sentiment(lyrics, sentiment), StringType())
+emotion_udf = udf(emotion_analysis, StringType())
 
 # Leggere i dati da Kafka
 df = spark \
@@ -77,6 +86,7 @@ json_df = df.selectExpr("get_json_object(value, '$.id') as id",
                         "get_json_object(value, '$.lyrics') as lyrics",
                         "get_json_object(value, '$.artist') as artist",
                         "get_json_object(value, '$.topic') as topic",
+                        "get_json_object(value, '$.genre') as genre",
                         "timestamp")
 
 # Applicare la funzione di preprocessing sul campo lyrics
@@ -85,6 +95,8 @@ preprocessed_df = json_df.withColumn("cleaned_lyrics", preprocess_udf(col("lyric
 # Applicare la funzione di sentiment analysis sul campo cleaned_lyrics
 sentiment_df = preprocessed_df.withColumn("sentiment", sentiment_udf(col("cleaned_lyrics")))
 
+# Applicare la funzione di analisi delle emozioni sul campo cleaned_lyrics
+sentiment_df = sentiment_df.withColumn("emotion", emotion_udf(col("cleaned_lyrics")))
 # Applicare la funzione di categorizzazione del sentimento sul campo sentiment
 result_df = sentiment_df.withColumn("sentiment_category", categorize_udf(col("lyrics"), col("sentiment")))
 

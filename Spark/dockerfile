@@ -1,10 +1,17 @@
 # Utilizza un'immagine base con Spark pre-installato
 FROM bitnami/spark:3.4.2
+
+
 # Aggiorna pip e installa le librerie Python necessarie
 RUN pip3 install --upgrade pip && \
     pip3 install nltk && \
-    pip3 install vader-multi
+    pip3 install vader-multi && \
+    pip3 install NRCLex 
+    
 
+USER root
+
+RUN python3 -m textblob.download_corpora
 # Aggiungiamo il percorso di Spark al PATH
 ENV PATH="${PATH}:/opt/bitnami/spark/bin"
 

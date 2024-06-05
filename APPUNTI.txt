@@ -46,3 +46,4 @@ docker logs spark-spark-master-1 (per trovare l'indirizzo di spark (spark://172.
 docker-compose exec spark-master spark-submit --master spark://172.18.0.2:7077 your_python_program.py (per eeguire il programma your_python_program)
 docker-compose down
 
+grafi:

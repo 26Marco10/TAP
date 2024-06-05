@@ -9,5 +9,5 @@ while true; do
     python3 "$SCRIPT_DIR/Italy.py"
 
     # Aspetta 1 ora prima di eseguire di nuovo gli script
-    sleep 3600
+    sleep 86400
 done

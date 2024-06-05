@@ -102,9 +102,34 @@ def get_lyrics(song_name, artist_name):
         return lyrics
     else:
         return "Lyrics not found"
+    
+def get_genre_artist(artist_name, token):
+    url = "https://api.spotify.com/v1/search"
+    headers = get_auth_header(token)
+    params = {
+        "q": artist_name,
+        "type": "artist",
+        "limit": "1"
+    }
+
+    response = requests.get(url, headers=headers, params=params)
+    response.raise_for_status()  # Raise an exception for HTTP errors
+    json_result = response.json()["artists"]["items"]
+
+    if not json_result:
+        print("No artist found")
+        return None
+    
+    if not json_result[0]["genres"]:
+        return "not applicable"
+
+    if not json_result[0]["genres"][0]:
+        return "not applicable"
+    
+    return json_result[0]["genres"][0]
 
 num = 0
-def produce_song_global_top(songs):
+def produce_song_global_top(songs, token):
     print("Producing songs...")
     for song in songs:
         global num
@@ -117,6 +142,7 @@ def produce_song_global_top(songs):
             "name": track["name"],
             "artist": track["artists"][0]["name"],
             "lyrics": lyrics,
+            "genre": get_genre_artist(track["artists"][0]["name"], token),
             "id": track["id"]
         }
         test_logger.info(json.dumps(song_data))
@@ -128,7 +154,7 @@ def main():
 
     if top_global_playlist:
         top_global_songs = get_playlist_songs(token, top_global_playlist["id"])
-        produce_song_global_top(top_global_songs)
+        produce_song_global_top(top_global_songs, token)
 
 if __name__ == "__main__":
     main()
