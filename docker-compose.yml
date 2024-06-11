@@ -98,3 +98,13 @@ services:
       - elastic
     restart: on-failure
 
+  global-italy:
+    build: ./Python
+    container_name: Global-Italy
+    depends_on:
+      - kafka
+      - logstash
+      - elastic
+      - spark
+      - kibana
+    restart: on-failure

@@ -18,7 +18,7 @@ client_secret = os.getenv("CLIENT_SECRET")
 genius_token = os.getenv("GENIUS_API_TOKEN")
 
 # Set up Logstash
-host = 'localhost'
+host = 'logstash'
 port = 5959
 test_logger = logging.getLogger('logstash')
 test_logger.setLevel(logging.INFO)

@@ -1,5 +1,5 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import udf, col, concat_ws
+from pyspark.sql.functions import udf, col, concat_ws, date_format
 from pyspark.sql.types import StringType
 import nltk
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
@@ -100,15 +100,19 @@ sentiment_df = sentiment_df.withColumn("emotion", emotion_udf(col("cleaned_lyric
 # Applicare la funzione di categorizzazione del sentimento sul campo sentiment
 result_df = sentiment_df.withColumn("sentiment_category", categorize_udf(col("lyrics"), col("sentiment")))
 
-# Creare una colonna per il nuovo id combinando id e timestamp
-result_df = result_df.withColumn("combined_id", concat_ws("_", col("id"), col("timestamp").cast("string")))
+# Convertire il timestamp in formato ISO 8601
+result_df = result_df.withColumn("iso_timestamp", date_format(col("timestamp"), "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
+
+# Creare una colonna per il nuovo id combinando id e iso_timestamp
+result_df = result_df.withColumn("combined_id", concat_ws("_", col("id"), col("iso_timestamp")))
+
 
 # Configura Elasticsearch writer
 es_write_config = {
     "es.nodes": "elastic:9200",  # Replace with your Elasticsearch host
     "es.index.auto.create": True,  # Create index if it doesn't exist
     "es.mapping.id": "combined_id",  # Define the document ID field
-    "es.resource": "music_analysis"  # Specify the Elasticsearch resource
+    "es.resource": "music"  # Specify the Elasticsearch resource
 }
 
 checkpoint_location = "/opt/spark/data/checkpoint"  # Sostituisci con la posizione desiderata

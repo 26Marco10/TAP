@@ -18,7 +18,7 @@ client_secret = os.getenv("CLIENT_SECRET")
 genius_token = os.getenv("GENIUS_API_TOKEN")
 
 # Set up Logstash
-host = 'localhost'
+host = 'logstash'
 port = 5959
 test_logger = logging.getLogger('logstash')
 test_logger.setLevel(logging.INFO)
@@ -138,7 +138,7 @@ def produce_song_global_top(songs, token):
         track = song["track"]
         lyrics = get_lyrics(track["name"], track["artists"][0]["name"])
         song_data = {
-            "topic": "song_italy_top",
+            "topic": "song_global_top",
             "name": track["name"],
             "artist": track["artists"][0]["name"],
             "lyrics": lyrics,

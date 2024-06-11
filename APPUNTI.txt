@@ -47,3 +47,6 @@ docker-compose exec spark-master spark-submit --master spark://172.18.0.2:7077 y
 docker-compose down
 
 grafi:
+1. grafo a torta per italia (ultime 50 canzoni) col filtro * | sort @timestamp desc | limit 50 (mettilo nella barra) per le emozioni
+2. grafo a torta per global (ultime 50 canzoni) col filtro * | sort @timestamp desc | limit 50 (mettilo nella barra) per le emozioni
+3. grafo a linee dove ogni linea rappresenta una emozione, nell'asse verticale ci sono i record e nell'asse orizzontale il tempo
