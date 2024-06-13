@@ -1,4 +1,4 @@
-# SASpotify
+# Indagine sull'Umore Musicale: Sentiment Analysis sui testi delle canzoni di Spotify 
 
 ## Introduzione
 
