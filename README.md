@@ -62,7 +62,7 @@ L'infrastruttura del progetto è costruita su tecnologie avanzate, tutte contain
  ## Grafi di Kibana
  <img src="images/Personal.png" alt="Personal" width="900" height="300">
  Kibana mostrerà nella dashboard una serie di grafi. I grafi soprastanti rappresentano i gusti dell'utente che usa MySpotify. Vengono visualizzate le emozioni, i generi e gli artisti più ascoltati. Ci saranno grafi uguali anche per i gusti musicali globali e italiani.
-  <center><img src="images/Linee.png" alt="linee" width="700" height="300"></center>
+ <img src="images/Linee.png" alt="linee" width="700" height="300" style="display: block; margin-left: auto; margin-right: auto;">
 
  ## Conclusioni
  Questo progetto combina tecniche avanzate di data engineering e machine learning per analizzare le emozioni nelle canzoni di Spotify. Utilizzando Docker, Logstash, Kafka, Spark, Elasticsearch e Kibana, offriamo uno strumento potente per comprendere le tendenze emotive nella musica.
