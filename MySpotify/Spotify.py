@@ -16,6 +16,15 @@ from urllib.parse import quote
 import lyricsgenius
 import html
 import os
+import logging
+import logstash
+
+# Set up Logstash
+host = 'logstash'
+port = 5959
+test_logger = logging.getLogger('logstash')
+test_logger.setLevel(logging.INFO)
+test_logger.addHandler(logstash.TCPLogstashHandler(host, port, version=1))
 
 load_dotenv()
 
@@ -194,17 +203,21 @@ def get_songs_by_artist(token, artist_id, country="IT"):
 
 def get_lyrics(song_name, artist_name):
     genius = lyricsgenius.Genius(genius_token)
-    #se dentro song_name ci sono delle parentesi quadre e/o tonde, prendi solo il testo prima di queste
-    if "[" in song_name:
-        song_name = song_name[:song_name.index("[")]
-    if "(" in song_name:
-        song_name = song_name[:song_name.index("(")]
-    
-    song = genius.search_song(song_name, artist_name)
+    song_name = song_name.split('[')[0].split('(')[0].strip()
+    try:
+        song = genius.search_song(song_name, artist_name)
+    except Exception as e:
+        print(f"Error: {e}")
+        return "Lyrics not found"
+        
     if song:
-        lyrics = song.lyrics
-        #togli la prima riga di lyrics
-        lyrics = lyrics[lyrics.index("\n")+1:]
+        # se lyrics contiene [FN# allora ritorna Lyrics not found
+        if song.lyrics.find("[FN#") != -1:
+            return "Lyrics not found"
+        #se c'è 50 o più volte il carattere " nella stringa ritorna Lyrics not found
+        if song.lyrics.count('"') >= 50:
+            return "Lyrics not found"
+        lyrics = song.lyrics.split('\n', 1)[-1]
         return lyrics
     else:
         return "Lyrics not found"
@@ -260,6 +273,32 @@ def delete_song_from_favorite(token, song_id):
 
     result = requests.delete(url, headers=headers, params=params)
     return result
+
+def get_genre_artist(artist_name, token):
+    url = "https://api.spotify.com/v1/search"
+    headers = get_auth_header(token)
+    params = {
+        "q": artist_name,
+        "type": "artist",
+        "limit": "1"
+    }
+
+    response = requests.get(url, headers=headers, params=params)
+    response.raise_for_status()  # Raise an exception for HTTP errors
+    json_result = response.json()["artists"]["items"]
+
+    if not json_result:
+        print("No artist found")
+        return None
+    
+    if not json_result[0]["genres"]:
+        return "not applicable"
+
+    if not json_result[0]["genres"][0]:
+        return "not applicable"
+    
+    return json_result[0]["genres"][0]
+
 
 AUTH_URL = 'https://accounts.spotify.com/authorize'
 TOKEN_URL = 'https://accounts.spotify.com/api/token'
@@ -814,6 +853,16 @@ def player(playlist_id,song_name, artist_name):
         "next_artist": next_artist_name,
         "playlist_id": playlist_id
     }
+
+    song_log = {
+        "topic": "song_played",
+        "name": song_name,
+        "artist": artist_name,
+        "lyrics": lyrics,
+        "genre": get_genre_artist(artist_name, token),
+        "id": search_for_song(token, song_name + artist_name)[0]["id"]
+    }
+    test_logger.info(json.dumps(song_log))
     return render_template("player.html", song=song)
 
 @app.route("/player_album/<album_id>/<song_name>/<artist_name>")
@@ -872,6 +921,15 @@ def player_album(album_id,song_name, artist_name):
         "next_artist": next_artist_name,
         "album_id": album_id
     }
+    song_log = {
+        "topic": "song_played",
+        "name": song_name,
+        "artist": artist_name,
+        "lyrics": lyrics,
+        "genre": get_genre_artist(artist_name, token),
+        "id": search_for_song(token, song_name + artist_name)[0]["id"]
+    }
+    test_logger.info(json.dumps(song_log))
     return render_template("player_album.html", song=song)
 
 @app.route("/player")
@@ -903,6 +961,15 @@ def player_song(song_name, artist_name):
         "link": link,
         "lyrics": lyrics
     }
+    song_log = {
+        "topic": "song_played",
+        "name": song_name,
+        "artist": artist_name,
+        "lyrics": lyrics,
+        "genre": get_genre_artist(artist_name, token),
+        "id": search_for_song(token, song_name + artist_name)[0]["id"]
+    }
+    test_logger.info(json.dumps(song_log))
     return render_template("player_single_song.html", song=song)
 
 @app.route("/player_artist/<artist_id>/<song_name>/<artist_name>")
@@ -961,6 +1028,15 @@ def player_artist(artist_id,song_name, artist_name):
         "next_artist": next_artist_name,
         "artist_id": artist_id
     }
+    song_log = {
+        "topic": "song_played",
+        "name": song_name,
+        "artist": artist_name,
+        "lyrics": lyrics,
+        "genre": get_genre_artist(artist_name, token),
+        "id": search_for_song(token, song_name + artist_name)[0]["id"]
+    }
+    test_logger.info(json.dumps(song_log))
     return render_template("player_artist.html", song=song)
 
 @app.route("/play_song/<song_name>/<artist_name>")
@@ -1056,6 +1132,15 @@ def player_favorite(song_name, artist_name):
         "next_name": next_song_name,
         "next_artist": next_artist_name
     }
+    song_log = {
+        "topic": "song_played",
+        "name": song_name,
+        "artist": artist_name,
+        "lyrics": lyrics,
+        "genre": get_genre_artist(artist_name, token),
+        "id": search_for_song(token, song_name + artist_name)[0]["id"]
+    }
+    test_logger.info(json.dumps(song_log))
     return render_template("player_favorite.html", song=song)   
 
 @app.route("/local")

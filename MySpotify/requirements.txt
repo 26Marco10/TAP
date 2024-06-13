@@ -15,6 +15,7 @@ lyricsgenius==3.0.1
 MarkupSafe==2.1.5
 oauthlib==3.2.2
 python-dotenv==1.0.1
+python-logstash==0.4.8
 pytubefix==5.3.0
 requests==2.31.0
 requests-oauthlib==2.0.0

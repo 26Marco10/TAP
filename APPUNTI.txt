@@ -48,5 +48,7 @@ docker-compose down
 
 grafi:
 1. grafo a torta per italia (ultime 50 canzoni) col filtro * | sort @timestamp desc | limit 50 (mettilo nella barra) per le emozioni
+   e aggiungi che il topic deve essere song_italy_top
 2. grafo a torta per global (ultime 50 canzoni) col filtro * | sort @timestamp desc | limit 50 (mettilo nella barra) per le emozioni
-3. grafo a linee dove ogni linea rappresenta una emozione, nell'asse verticale ci sono i record e nell'asse orizzontale il tempo
+   e aggiungi che il topic deve essere song_global_top
+3. grafo a linee dove ogni linea rappresenta una emozione, nell'asse verticale la percentuale delle emozioni e in quelle orizzontale il tempo

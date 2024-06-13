@@ -5,14 +5,11 @@ FROM python:3.12.0-slim
 WORKDIR /app
 
 # Copia il file dei requisiti e installa le dipendenze
-COPY requirements.txt ./app
+COPY requirements.txt /app
 COPY Spotify.py /app
 COPY templates /app/templates
 COPY static /app/static
 COPY .env /app
-# Copia il file requirements.txt nella directory di lavoro del container
-COPY requirements.txt /app/requirements.txt
-
 
 RUN pip install --no-cache-dir -r requirements.txt
 

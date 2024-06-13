@@ -108,3 +108,21 @@ services:
       - spark
       - kibana
     restart: on-failure
+
+  my-spotify:
+    build: ./MySpotify
+    container_name: My-Spotify
+    ports:
+      - "8000:8000"
+    expose:
+      - "8000:8000"
+    volumes:
+      - ./MySpotify/static:/app/static
+    depends_on:
+      - kafka
+      - logstash
+      - elastic
+      - spark
+      - kibana
+    restart: on-failure
+
