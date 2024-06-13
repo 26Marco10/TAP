@@ -11,12 +11,13 @@ La musica evoca una vasta gamma di emozioni, ma comprendere e quantificare quest
 ## Architettura del Sistema
 
 L'infrastruttura del progetto è costruita su tecnologie avanzate, tutte containerizzate tramite Docker per garantire portabilità e facilità di distribuzione.
+ <img src="images/infrastruttura.png" alt="Personal" width="900" height="300">
 
 ### Componenti Principali
 
 1. **Raccolta Dati con le API di Spotify**:
    - Le API di Spotify e Genius estraggono informazioni dettagliate sulle canzoni nelle playlist pubbliche *Top 50 Global* e *Top 50 Italy*, inclusi titolo, artista, testo e altre metriche.
-   Vengono anche inviati i dati riguardanti le canzoni che riprodotte dal MySpotify.
+   Vengono anche inviati i dati riguardanti le canzoni riprodotte dal MySpotify.
 
 2. **Logstash**:
    - Utilizzato per l'ingestione e la trasformazione dei dati raccolti, preparandoli per l'elaborazione successiva.
