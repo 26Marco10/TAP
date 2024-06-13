@@ -60,4 +60,7 @@ L'infrastruttura del progetto è costruita su tecnologie avanzate, tutte contain
     - Visita http://localhost:5601 per visualizzare i risultati del sentiment su Kibana.
  
  ## Grafi di Kibana
- 
+ <img src="images/Global.png" alt="Global" width="500" height="300">
+
+ ## Conclusioni
+ Questo progetto combina tecniche avanzate di data engineering e machine learning per analizzare le emozioni nelle canzoni di Spotify. Utilizzando Docker, Logstash, Kafka, Spark, Elasticsearch e Kibana, offriamo uno strumento potente per comprendere le tendenze emotive nella musica.
