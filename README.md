@@ -2,11 +2,11 @@
 
 ## Introduzione
 
-Questo progetto mira a fornire una visione approfondita delle emozioni espresse nelle canzoni presenti su Spotify. specificatamente sui testi delle canzoni. Con questi dati sarà possibile visualizzare i gusti musicali nel mondo. Inoltre è stato implementato una versione personale di Spotify (da ora chiamato MySpotify), con possibilità di download e riproduzione offline.
+Questo progetto mira a fornire una visione approfondita delle emozioni espresse nelle canzoni presenti su Spotify, specificatamente sui testi delle canzoni. Con questi dati è possibile visualizzare i gusti musicali nel mondo. Inoltre è stato implementata una versione personale di Spotify (da ora chiamata MySpotify), con possibilità di download e riproduzione offline.
 
 ## Problema
 
-La musica evoca una vasta gamma di emozioni, ma comprendere e quantificare questi sentimenti su larga scala è complesso. Con milioni di canzoni disponibili su Spotify, c'è bisogno di strumenti che possano analizzare automaticamente le emozioni espresse nei brani. Questo progetto affronta questa sfida utilizzando le API di Spotify e di Genius per raccogliere dati dalle playlist e applicando tecniche di sentiment analysis per determinare le emozioni predominanti.
+La musica evoca una vasta gamma di emozioni, ma comprendere e quantificare questi sentimenti su larga scala è complesso. Con milioni di canzoni disponibili su Spotify, c'è bisogno di strumenti che possano analizzare automaticamente le emozioni espresse nei brani. Questo progetto affronta questa sfida utilizzando le API di Spotify e di Genius per raccogliere dati dalle playlist e applica tecniche di sentiment analysis per determinare le emozioni predominanti.
 
 ## Architettura del Sistema
 
@@ -62,7 +62,9 @@ L'infrastruttura del progetto è costruita su tecnologie avanzate, tutte contain
  ## Grafi di Kibana
  <img src="images/Personal.png" alt="Personal" width="900" height="300">
  Kibana mostrerà nella dashboard una serie di grafi. I grafi soprastanti rappresentano i gusti dell'utente che usa MySpotify. Vengono visualizzate le emozioni, i generi e gli artisti più ascoltati. Ci saranno grafi uguali anche per i gusti musicali globali e italiani.
+ Inoltre, se si userà MySpotify giornalmente, sarà possibile vedere come variano i propri gusti musicali nel tempo (giornalmente, settimanalmente e mensilmente). Nell'immagine di esempio sottostante è stato usato dalle 17:00 alle 21:00.
  <img src="images/Linee.png" alt="linee" width="900" height="400">
+ 
 
  ## Conclusioni
  Questo progetto combina tecniche avanzate di data engineering e machine learning per analizzare le emozioni nelle canzoni di Spotify. Utilizzando Docker, Logstash, Kafka, Spark, Elasticsearch e Kibana, offriamo uno strumento potente per comprendere le tendenze emotive nella musica.
