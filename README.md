@@ -57,6 +57,11 @@ L'infrastruttura del progetto è costruita su tecnologie avanzate, tutte contain
    ```
 4. **Accedi a MySpotify**:
     - Visita http://localhost:8000 per accedere a MySpotify.
+
+
+https://github.com/user-attachments/assets/8c8d2189-e25b-40eb-9a44-02260c7e5bb1
+
+      
 5. **Accedi a Kibana**:
     - Visita http://localhost:5601 per visualizzare i risultati del sentiment su Kibana.
  
